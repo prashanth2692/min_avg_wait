@@ -1,46 +1,52 @@
 package com.prashanth;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        // write your code here
+    private int[] customerEntryTime;
 
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-//        System.out.println(scanner.nextLine());
         int noOfCustomers = scanner.nextInt();
-        int[] customerEntryTime = new int[noOfCustomers];
-        int[] customerOrderTime = new int[noOfCustomers];
-        boolean[] orderStarted = new boolean[noOfCustomers];
-//        List<Integer> customerEntryTime = new ArrayList<>();
+        int[] customerEntryTime = new int[noOfCustomers]; // array of order entry time for ith customer
+        int[] customerOrderTime = new int[noOfCustomers]; // array of order waiting time of ith customer
+        boolean[] orderStarted = new boolean[noOfCustomers]; // maintains if ith order is completed
+
+        // read customer data
         for (int i = 0; i < noOfCustomers; i++) {
             customerEntryTime[i] = scanner.nextInt();
             customerOrderTime[i] = scanner.nextInt();
         }
 
-        int totalWaitTime = 0;
-        int nextWaitTIme = Integer.MAX_VALUE;
-        int currentWaitingTime = customerOrderTime[0];
+        int totalWaitTime = 0; //customerOrderTime[0];
+        int currentWaitingTime = 0; //customerOrderTime[0]; //
         int tempIndex = -1;
 
-        for (int i = 1; i < noOfCustomers - 1; i++) {
-            int j = 1;
-            while (j < noOfCustomers && customerEntryTime[j] < currentWaitingTime) {
+        for (int i = 0; i < noOfCustomers; i++) {
+            int nextWaitTIme = Integer.MAX_VALUE; // stores the order which will e taken up next
+
+            int j = 0;
+            while (j < noOfCustomers && customerEntryTime[j] <= currentWaitingTime) {
+                // verify all the customers who has placed order within current waiting time.
+                // pick the least time taking order
                 if (orderStarted[j] == false && nextWaitTIme > customerOrderTime[j]) {
                     nextWaitTIme = customerOrderTime[j];
                     tempIndex = j;
                 }
                 j++;
             }
-            orderStarted[tempIndex] = true;
-            System.out.println("current wait: " + currentWaitingTime);
-            currentWaitingTime += nextWaitTIme;
-            System.out.println("current wait: " + currentWaitingTime);
-        }
 
-        System.out.println(currentWaitingTime);
+            // set the selected order as completed
+            orderStarted[tempIndex] = true;
+            currentWaitingTime += nextWaitTIme;
+            totalWaitTime = totalWaitTime + currentWaitingTime - customerEntryTime[tempIndex];
+
+//            System.out.println("next time: " + nextWaitTIme);
+//            System.out.println("wait time: " + nextWaitTIme + (totalWaitTime - customerEntryTime[tempIndex]));
+//            System.out.println(totalWaitTime);
+        }
+//        System.out.println(currentWaitingTime);
+        System.out.println(totalWaitTime/noOfCustomers);
     }
 }
